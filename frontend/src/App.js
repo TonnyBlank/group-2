@@ -41,61 +41,69 @@ function App() {
     setRefreshTickets(!refreshTickets);
   };
 
+  if (!isLoggedIn) {
+    return (
+      <div className="auth-shell">
+        <div className="auth-media">
+          <img src="/home.png" alt="Campus view" className="auth-media-image" />
+          <div className="auth-media-overlay">
+            <h1>School ICT Lab Support Platform</h1>
+          </div>
+        </div>
+        <div className="auth-panel">
+          <div className="auth-panel-inner">
+            {showRegister ? (
+              <>
+                <Register />
+                <p className="mt-3 text-center auth-switch-text">
+                  Already have an account?{' '}
+                  <button className="btn btn-link p-0 auth-link-button" onClick={() => setShowRegister(false)}>Login</button>
+                </p>
+              </>
+            ) : (
+              <>
+                <Login onLogin={handleLogin} />
+                <p className="mt-3 text-center auth-switch-text">
+                  Don't have an account?{' '}
+                  <button className="btn btn-link p-0 auth-link-button" onClick={() => setShowRegister(true)}>Register</button>
+                </p>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container py-4">
       <h1 className="mb-4">School ICT Lab Support Platform</h1>
-      {isLoggedIn && (
-        <>
-          <button className="btn btn-info mb-3" onClick={() => setShowReports(r => !r)}>
+      <div className="action-bar mb-3">
+          <button className="btn btn-info" onClick={() => setShowReports(r => !r)}>
             {showReports ? 'Hide Reports' : 'Show Reports'}
           </button>
-          <button className="btn btn-info mb-3 ms-2" onClick={() => setShowAnalytics(!showAnalytics)}>
+          <button className="btn btn-info" onClick={() => setShowAnalytics(!showAnalytics)}>
             {showAnalytics ? 'Hide Analytics' : 'Show Analytics'}
           </button>
-          <button className="btn btn-success mb-3 ms-2" onClick={() => setShowEquipmentManagement(!showEquipmentManagement)}>
+          <button className="btn btn-success" onClick={() => setShowEquipmentManagement(!showEquipmentManagement)}>
             {showEquipmentManagement ? 'Hide Equipment Management' : 'Manage Equipment'}
           </button>
-        </>
+          <Logout setIsLoggedIn={setIsLoggedIn} className="btn btn-danger" />
+      </div>
+      {showReports && <Reports />}
+      {showAnalytics && <Analytics />}
+      {showEquipmentManagement && <EquipmentManagement />}
+      <EquipmentList />
+      {/* Only show TicketForm to regular users, not technicians */}
+      {userRole === 'user' && (
+      <TicketForm onTicketCreated={handleTicketCreated} />
       )}
-      {showReports && isLoggedIn && <Reports />}
-      {showAnalytics && isLoggedIn && <Analytics />}
-      {showEquipmentManagement && isLoggedIn && <EquipmentManagement />}
-      {!isLoggedIn ? (
-        <>
-          {showRegister ? (
-            <>
-              <Register />
-              <p className="mt-3">
-                Already have an account?{' '}
-                <button className="btn btn-link p-0" onClick={() => setShowRegister(false)}>Login</button>
-              </p>
-            </>
-          ) : (
-            <>
-              <Login onLogin={handleLogin} />
-              <p className="mt-3">
-                Don't have an account?{' '}
-                <button className="btn btn-link p-0" onClick={() => setShowRegister(true)}>Register</button>
-              </p>
-            </>
-          )}
-        </>
-      ) : (
-        <>
-          <Logout setIsLoggedIn={setIsLoggedIn} />
-          <EquipmentList />
-          {/* Only show TicketForm to regular users, not technicians */}
-          {userRole === 'user' && (
-          <TicketForm onTicketCreated={handleTicketCreated} />
-          )}
-          {userRole === 'technician' && (
-            <div className="alert alert-info">
-              <strong>Technician View:</strong> You can view and manage tickets, but only regular users can create new tickets.
-            </div>
-          )}
-          <TicketList key={refreshTickets} />
-        </>
+      {userRole === 'technician' && (
+        <div className="alert alert-info">
+          <strong>Technician View:</strong> You can view and manage tickets, but only regular users can create new tickets.
+        </div>
       )}
+      <TicketList key={refreshTickets} />
     </div>
   );
 }

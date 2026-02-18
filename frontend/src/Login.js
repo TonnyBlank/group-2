@@ -51,10 +51,11 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="card p-4 mx-auto" style={{maxWidth: 400}}>
-      <h2 className="mb-3">Login</h2>
+    <div className="card p-4 mx-auto text-center" style={{maxWidth: 400}}>
+      <h2 className="mb-2 text-center text-primary fw-bold">Hi, welcome back to ICTPLT</h2>
+      <p className="mb-3 text-center text-dark fw-bold">Please fill in your details to log in</p>
       {message && <div className="alert alert-info">{message}</div>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="text-start">
         <div className="mb-3">
           <label className="form-label">Username:</label>
           <input
